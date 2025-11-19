@@ -54,7 +54,8 @@ class DataStore:
     def update_product(self, product_id: str, payload: dict) -> dict:
         if product_id not in self.products:
             raise KeyError("product not found")
-        product = replace(self.products[product_id], **payload)
+        sanitized_payload = self._sanitize_update_payload(payload, product_id, "product")
+        product = replace(self.products[product_id], **sanitized_payload)
         self.products[product_id] = product
         return asdict(product)
 
@@ -80,7 +81,8 @@ class DataStore:
     def update_customer(self, customer_id: str, payload: dict) -> dict:
         if customer_id not in self.customers:
             raise KeyError("customer not found")
-        customer = replace(self.customers[customer_id], **payload)
+        sanitized_payload = self._sanitize_update_payload(payload, customer_id, "customer")
+        customer = replace(self.customers[customer_id], **sanitized_payload)
         self.customers[customer_id] = customer
         return asdict(customer)
 
@@ -115,3 +117,12 @@ class DataStore:
         order = DraftOrder(id=str(uuid4()), customer_id=customer_id, items=validated_items)
         self.orders[order.id] = order
         return asdict(order)
+
+    @staticmethod
+    def _sanitize_update_payload(payload: dict, entity_id: str, entity_name: str) -> dict:
+        """Reject or ignore attempts to mutate immutable identifiers."""
+
+        if "id" in payload and payload["id"] != entity_id:
+            raise ValueError(f"{entity_name} id is immutable")
+        # Remove the id key so dataclasses.replace won't attempt to update it
+        return {key: value for key, value in payload.items() if key != "id"}
