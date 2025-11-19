@@ -27,7 +27,7 @@
    - Notes: gift receipt flag, curbside instructions, fulfillment routing tag.
 4. **Accept payment**
    - Present tender options (card, cash, split, gift, store credit, external financing).
-   - Card payments: display device readiness, EMV/Ctless prompts, collect signature/PIN when required, and post raw network response to payments API.
+   - Card payments: display device readiness, EMV/Ctless prompts, collect signature/PIN when required, and only pass the tokenized authorization payload to the payments API while the raw network data remains within the payment microservice.
    - Cash payments: show change due, log denomination breakdown, and update drawer variance tracker.
 5. **Finalize sale**
    - Offer receipt via print, email, or SMS and log preference to customer profile.
