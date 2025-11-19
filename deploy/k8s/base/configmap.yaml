@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gowpos-config
+data:
+  apiUrl: https://api.gowpos.local
+  frontendUrl: https://app.gowpos.local
+  featureFlags: |
+    {
+      "receiptPrinting": true,
+      "inventoryV2": false
+    }
